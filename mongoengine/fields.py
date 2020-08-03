@@ -773,6 +773,8 @@ class EmbeddedDocumentField(BaseField):
 
     def prepare_query_value(self, op, value):
         if value is not None and not isinstance(value, self.document_type):
+            if isinstance(value, dict) and all(k.startswith('$') for k in value.keys()):
+                return value
             try:
                 value = self.document_type._from_son(value)
             except ValueError:
